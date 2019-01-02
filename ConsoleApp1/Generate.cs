@@ -10,12 +10,6 @@ namespace Sanalista
     {
         public const int square= 4;
         public static char[,] MakeQuiz() {
-            return new char[,]{
-                { 'V','Ä','L','K'},
-                { 'R','Ä','K','E' },
-                { 'G','I','C','K' },
-                { 'R','U','E','S' }
-            };
             string strArray = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖ";
             char[,] grid;
             bool F;
