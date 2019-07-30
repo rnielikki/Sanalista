@@ -15,7 +15,8 @@ namespace Sanalista
             bool F;
             do {
                 grid = new char[square, square];
-                F = FillWord(grid);Console.WriteLine("Trying");
+                Console.WriteLine("Trying");
+                F = FillWord(grid);
             } while (!F); //If the way is closed... not good
             Random rand = new Random();
             for (int i = 0; i < square; i++) {
@@ -31,7 +32,7 @@ namespace Sanalista
         {
             Random rand = new Random();
             string randword=Nodes.LongWords.ElementAt(rand.Next(Nodes.LongWords.Count));
-            Console.WriteLine(randword);
+            Console.WriteLine($"** Sample long word: [ {randword} ] **");
             int[] Way;
             int x =rand.Next(4), y = rand.Next(4);//Set initial position
             foreach (char c in randword)

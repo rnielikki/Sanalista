@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Sanalista
@@ -9,23 +10,23 @@ namespace Sanalista
     {
         private Node RootNode { get; set; }
         private char[,] Quiz { get; set; }
-        ConcurrentDictionary<int[][], string> AllResult = new ConcurrentDictionary<int[][], string>();
-        public Finder(Node rootnode, char[,] quiz) {
+        public static async Task StartAsync(Node rootnode, char[,] quiz) {
             RootNode = rootnode;
             Quiz = quiz;
-            StartAsync().Wait();
-        }
-        private async Task StartAsync() {
             //Not dictionary: Same word can have multiple solution.
+            ConcurrentDictionary<int[][], string> AllResult = new ConcurrentDictionary<int[][], string>();
             Task[] tasks = new Task[Generate.square * Generate.square];
             for (int i = 0; i < Generate.square; i++)
             {
                 for (int j = 0; j < Generate.square; j++)
                 {
-                    tasks[Generate.square * i + j] = WordTask(i, j);
+                    tasks[Generate.square * i + j] = new Task(() =>
+                    {
+                    });
+                    tasks[Generate.square * i + j].Start();
+
                 }
             }
-            Console.WriteLine();
             await Task.WhenAll(tasks);
             foreach (var s in AllResult)
             {
@@ -39,7 +40,7 @@ namespace Sanalista
                 await Console.Out.WriteAsync("\n");
             }
         }
-        private async Task<ConcurrentDictionary<int[][], string>> GoSearch(Node wnode, char[,] cList, int x, int y, ConcurrentDictionary<int[][], string> AnsList)
+        private static async Task<ConcurrentDictionary<int[][], string>> GoSearch(Node wnode, char[,] cList, int x, int y, ConcurrentDictionary<int[][], string> AnsList)
         {
             cList = cList.Clone() as char[,];
             //You know, cause' whole array size<10, we'll use array[] with 10*x+y
@@ -76,7 +77,7 @@ namespace Sanalista
             await Task.WhenAll(tasks);
             return AnsList;
         }
-        private List<int[]> Counter(char[,] cList) {
+        private static List<int[]> Counter(char[,] cList) {
             List<int[]> xy = new List<int[]>();
             for (int i = 0; i < Generate.square; i++)
             {
@@ -88,15 +89,13 @@ namespace Sanalista
             }
             return xy;
         }
-        private async Task<bool> WordTask(int x, int y)
+        private static void MyTask(int x, int y)
         {
-            var result = await GoSearch(RootNode, Quiz, x, y, new ConcurrentDictionary<int[][], string>());
-            bool res=true;
+            var result = GoSearch(rootnode, Quiz, x, y, new ConcurrentDictionary<int[][], string>()).Result;
             foreach (var pair in result)
             {
-                 res&=AllResult.TryAdd(pair.Key, pair.Value);
+                bool res = AllResult.TryAdd(pair.Key, pair.Value);
             }
-            return res;
         }
     }
 }

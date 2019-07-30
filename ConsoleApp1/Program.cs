@@ -14,7 +14,7 @@ namespace Sanalista
             Node root = Nodes.Maker();//Täytyy olla ennen Quizia.
             char[,] Quiz = Generate.MakeQuiz();
             Generate.PrintQuiz(Quiz);
-            Finder.StartAsync(root,Quiz).Wait();
+            new Finder(root,Quiz);
         }
     }
 }
